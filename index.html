@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>멍냥 성향 테스트</title>
+<meta name="description" content="12문항으로 알아보는 우리 강아지·고양이의 성향 유형. 다시봄동물의료센터 검수.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="멍냥 성향 테스트 | 우리 아이는 어떤 성격일까?">
+<meta property="og:description" content="12문항으로 알아보는 강아지·고양이 16가지 성향 유형">
+<meta property="og:url" content="https://jwim0123.github.io/mungnyang-test/">
+<!-- 공유 미리보기 이미지가 준비되면 아래 주석을 풀어주세요 (권장 1200x630) -->
+<!-- <meta property="og:image" content="https://jwim0123.github.io/mungnyang-test/images/og.jpg"> -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;600&family=DM+Mono:wght@500&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<style>
+/* Layout: one narrow column, three screens (start → quiz → result); species sets the accent */
+:root{
+  --bg:#EEF1EC; --surface:#FFFFFF; --ink:#1C2420; --muted:#5E6A63; --line:#D5DCD6;
+  --dog:#2D5BD0; --cat:#A0417F; --accent:var(--dog); --accent-soft:#E3EAFA;
+  --f-display:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,Menlo,monospace;
+}
+:root[data-species="cat"]{--accent:var(--cat);--accent-soft:#F5E4EF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141916;--surface:#1D2420;--ink:#E8EDE9;--muted:#9AA59F;--line:#2E3832;
+  --dog:#88A6F2;--cat:#E28EC6;--accent-soft:#232C3F;color-scheme:dark}
+  :root:not([data-theme="light"])[data-species="cat"]{--accent-soft:#3A2534}}
+:root[data-theme="dark"]{--bg:#141916;--surface:#1D2420;--ink:#E8EDE9;--muted:#9AA59F;--line:#2E3832;
+  --dog:#88A6F2;--cat:#E28EC6;--accent-soft:#232C3F;color-scheme:dark}
+:root[data-theme="dark"][data-species="cat"]{--accent-soft:#3A2534}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 56px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,.display{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:2.6rem;line-height:1.15}
+p{margin:0}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* start */
+.axes{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:.92rem}
+.axes div{display:flex;gap:10px;align-items:baseline}
+.axes b{font-family:var(--f-mono);font-weight:500;color:var(--ink);min-width:2.6em}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pick button{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:22px 16px;text-align:left;
+  display:flex;flex-direction:column;gap:6px;transition:border-color .15s,transform .15s}
+.pick button:hover{transform:translateY(-2px)}
+.pick button[data-s="dog"]:hover{border-color:var(--dog)}
+.pick button[data-s="cat"]:hover{border-color:var(--cat)}
+.pick .big{font-family:var(--f-display);font-size:1.6rem}
+.pick small{color:var(--muted);font-size:.85rem}
+.note{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+
+/* quiz */
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qmeta{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--muted)}
+.qmeta button{background:none;border:0;color:var(--muted);padding:4px 0}
+.qmeta button:disabled{visibility:hidden}
+.q{font-family:var(--f-display);font-size:1.75rem;line-height:1.3;min-height:3.9em;text-wrap:balance}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opts button{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:18px 20px;text-align:left;
+  display:flex;gap:14px;align-items:flex-start;font-size:1rem;transition:border-color .15s,background .15s}
+.opts button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opts .k{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);padding-top:.2em}
+
+/* result */
+.code{font-family:var(--f-mono);font-size:clamp(3rem,16vw,4.6rem);line-height:1;letter-spacing:.06em;color:var(--accent)}
+.rname{font-size:2rem}
+.tag{font-size:1.05rem}
+.photo{margin:0;border-radius:20px;overflow:hidden;aspect-ratio:4/3;max-width:100%;background:var(--accent-soft)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  border:2px dashed var(--accent);border-radius:20px;color:var(--accent);text-align:center;padding:16px;box-sizing:border-box}
+.ph b{font-family:var(--f-mono);font-weight:500;font-size:.95rem}
+.ph span{font-size:.82rem;color:var(--muted)}
+.scores{display:flex;flex-direction:column;gap:14px;background:var(--surface);border-radius:18px;padding:20px}
+.row{display:grid;grid-template-columns:5.2em 1fr 5.2em;gap:10px;align-items:center;font-size:.85rem}
+.row .l{text-align:right}
+.row .on{color:var(--accent);font-weight:600}
+.track{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+.track span{height:10px;border-radius:3px;background:var(--line)}
+.track span.f{background:var(--accent)}
+.sec{display:flex;flex-direction:column;gap:6px}
+.sec h3{margin:0;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.actions button{border-radius:99px;padding:12px 20px;border:1.5px solid var(--line);background:var(--surface)}
+.actions .primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.actions a{border-radius:99px;padding:12px 20px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none}
+.actions a:focus-visible,.credit a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.credit{font-size:.82rem;color:var(--muted);text-align:center;text-wrap:balance}
+.credit a{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
+.credit a:hover{text-decoration:underline}
+.toast{font-size:.85rem;color:var(--accent);min-height:1.4em;overflow-wrap:anywhere;user-select:all}
+.screen{display:flex;flex-direction:column;gap:24px}
+@media (max-width:420px){.axes{grid-template-columns:1fr}h1{font-size:2.2rem}.q{font-size:1.5rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="screen" id="start">
+    <p class="eyebrow">반려동물 성향 테스트 · 12문항</p>
+    <h1>우리 아이는<br>어떤 성격일까?</h1>
+    <p class="muted">개·고양이 성격 연구에서 쓰는 네 가지 차원을 바탕으로, 평소 행동을 떠올리며 고르면 16가지 유형 중 하나가 나와요.</p>
+    <div class="axes">
+      <div><b>S / R</b><span>사교형 · 신중형</span></div>
+      <div><b>A / C</b><span>활발형 · 차분형</span></div>
+      <div><b>B / W</b><span>대담형 · 예민형</span></div>
+      <div><b>D / I</b><span>껌딱지형 · 독립형</span></div>
+    </div>
+    <div class="pick">
+      <button data-s="dog" id="pick-dog"><span class="big">강아지</span><small>산책, 손님, 장난감 이야기</small></button>
+      <button data-s="cat" id="pick-cat"><span class="big">고양이</span><small>사냥놀이, 숨숨집, 무릎 이야기</small></button>
+    </div>
+    <p class="note">재미로 보는 테스트예요. 의학적 진단이 아니고, 1살 미만은 성격이 아직 자라는 중이라 결과가 바뀔 수 있어요.</p>
+    <p class="credit"><span class="credit-text"></span><br><a class="place-link" target="_blank" rel="noopener">병원 보러가기 ›</a></p>
+  </section>
+
+  <section class="screen" id="quiz" hidden>
+    <div class="qmeta"><button id="back">← 이전</button><span id="count"></span></div>
+    <div class="bar"><i id="prog"></i></div>
+    <p class="q" id="qtext"></p>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <section class="screen" id="result" hidden>
+    <p class="eyebrow" id="rlabel"></p>
+    <div class="code" id="rcode"></div>
+    <h2 class="rname" id="rname"></h2>
+    <p class="tag" id="rtag"></p>
+    <figure class="photo" id="photo">
+      <img id="rimg" alt="" hidden>
+      <div class="ph" id="rph"><b id="rphname"></b><span>이 자리에 유형 이미지가 들어가요</span></div>
+    </figure>
+    <div class="scores" id="scores"></div>
+    <div class="sec"><h3>이런 아이예요</h3><p id="rdesc"></p></div>
+    <div class="sec"><h3>잘 맞는 놀이</h3><p id="rplay"></p></div>
+    <div class="sec"><h3>보호자 팁</h3><p id="rtip"></p></div>
+    <div class="actions">
+      <button class="primary" id="share">결과 공유하기</button>
+      <button class="primary" id="try" hidden>우리 아이도 테스트하기</button>
+      <a class="place-link" id="place-btn" target="_blank" rel="noopener"></a>
+      <button id="again">다시 하기</button>
+      <button id="other"></button>
+    </div>
+    <p class="toast" id="toast" aria-live="polite"></p>
+    <p class="credit"><span class="credit-text"></span><br><a class="place-link" target="_blank" rel="noopener">병원 보러가기 ›</a></p>
+  </section>
+</div>
+
+<script>
+const AX=[["S","R","사교","신중"],["A","C","활발","차분"],["B","W","대담","예민"],["D","I","껌딱지","독립"]];
+const Q={
+dog:[
+ ["산책 중 낯선 사람이 \"귀엽다~\" 하고 다가오면?",[["꼬리 흔들며 먼저 다가가 인사한다","S"],["보호자 뒤에 서서 가만히 지켜본다","R"]]],
+ ["산책을 다녀온 직후 우리 아이는?",[["물 마시고 바로 철퍼덕 눕는다","C"],["장난감을 물고 와서 더 놀자고 한다","A"]]],
+ ["청소기나 드라이기가 켜지면?",[["짖거나 다른 방으로 피한다","W"],["별 신경 안 쓰거나 다가가 냄새 맡아본다","B"]]],
+ ["보호자가 다른 방으로 가면?",[["졸졸 따라와서 옆에 자리 잡는다","D"],["하던 걸 계속하며 그 자리에 있다","I"]]],
+ ["처음 보는 강아지를 만나면?",[["거리를 두거나 못 본 척한다","R"],["냄새 맡고 바로 놀자고 몸을 낮춘다","S"]]],
+ ["하루 대부분의 시간 동안?",[["돌아다니거나 뭔가 물고 뜯고 있다","A"],["자거나 누워서 쉬고 있다","C"]]],
+ ["처음 가는 장소(새 공원, 병원 대기실)에서는?",[["여기저기 냄새 맡으며 탐색한다","B"],["몸을 낮추고 보호자에게 바짝 붙는다","W"]]],
+ ["보호자가 외출 준비를 하면?",[["별 반응 없이 자기 할 일을 한다","I"],["낑낑대거나 현관 앞을 지킨다","D"]]],
+ ["집에 손님이 오면?",[["반갑게 맞고 손님 곁을 떠나지 않는다","S"],["짖거나 조용히 다른 방으로 간다","R"]]],
+ ["공이나 장난감을 던져주면?",[["몇 번 하다가 흥미를 잃는다","C"],["지칠 때까지 계속 물어 온다","A"]]],
+ ["천둥이나 폭죽 같은 큰 소리가 나면?",[["떨거나 구석에 숨는다","W"],["잠깐 쳐다보고 금방 잊는다","B"]]],
+ ["혼자 놀 시간이 생기면?",[["혼자서도 장난감 갖고 잘 논다","I"],["장난감을 들고 보호자에게 와서 같이 놀자고 한다","D"]]]
+],
+cat:[
+ ["집에 손님이 오면?",[["마중 나와서 손님 냄새를 맡는다","S"],["숨어서 손님이 갈 때까지 안 나온다","R"]]],
+ ["낚싯대 장난감을 흔들어주면?",[["눈으로만 쫓다가 금방 관심을 끊는다","C"],["몸을 낮추고 전력으로 사냥한다","A"]]],
+ ["갑자기 큰 소리가 나면?",[["몸을 낮추고 숨을 곳으로 달아난다","W"],["귀만 돌려 쳐다보고 끝이다","B"]]],
+ ["보호자가 소파에 앉으면?",[["무릎이나 바로 옆으로 올라온다","D"],["자기 자리에서 꿈쩍하지 않는다","I"]]],
+ ["처음 보는 사람이 손을 내밀면?",[["피하거나 하악질을 한다","R"],["냄새 맡고 얼굴을 비빈다","S"]]],
+ ["밤이나 새벽 '우다다'는?",[["거의 매일 집 안을 질주한다","A"],["거의 본 적 없다","C"]]],
+ ["새 박스나 가구가 들어오면?",[["바로 들어가거나 올라가서 탐색한다","B"],["멀리서 한참 관찰한 뒤에야 다가간다","W"]]],
+ ["보호자가 집에 돌아오면?",[["슬쩍 보고 하던 일을 계속한다","I"],["현관까지 마중 나와 울며 반긴다","D"]]],
+ ["다른 고양이(동거묘·처음 보는 고양이)와는?",[["금방 어울리거나 붙어 지낸다","S"],["거리를 두고 자기 영역을 지킨다","R"]]],
+ ["캣타워나 높은 곳은?",[["정해진 자리에서 잘 안 움직인다","C"],["수시로 오르내리며 돌아다닌다","A"]]],
+ ["이동장에 넣어 외출하면?",[["계속 울거나 떨며 힘들어한다","W"],["의외로 차분하게 바깥을 구경한다","B"]]],
+ ["쓰다듬어 주면?",[["몇 번 받고 나면 자리를 뜬다","I"],["더 해달라고 몸을 비비며 따라온다","D"]]]
+]};
+const T={
+SABD:["파티의 주인공","모두가 내 친구, 보호자는 베프","처음 보는 사람도 금세 친구로 만들고, 놀이에는 늘 진심이에요. 겁이 없어 새로운 곳도 즐기지만, 마지막엔 꼭 보호자 곁으로 돌아와요.","공놀이, 터그, 친구들과 함께하는 놀이 모임","에너지가 넘쳐서 하루 놀이량이 부족하면 장난이 커질 수 있어요. 놀이 시간을 넉넉히 잡아주세요."],
+SABI:["동네 탐험가","세상은 넓고 냄새 맡을 곳은 많다","사교적이고 대담해서 새로운 장소와 존재를 반겨요. 보호자를 좋아하지만 혼자만의 탐험 시간도 꼭 필요한 타입이에요.","새로운 산책 코스, 노즈워크, 숨겨둔 간식 찾기","호기심이 커서 위험한 것도 먼저 들이대요. 외출 시 안전장치와 리콜 훈련이 중요해요."],
+SAWD:["호들갑 반장","반가움도 놀람도 200%","사람을 좋아하고 활발하지만 작은 변화에도 크게 반응해요. 놀랐을 때 가장 먼저 찾는 건 보호자 품이에요.","짧고 자주 하는 놀이, 보호자와 함께하는 간단한 트릭 훈련","놀랐을 때 다그치기보다 차분한 목소리로 안심시켜 주세요. 예측 가능한 일과가 도움이 돼요."],
+SAWI:["눈치 빠른 사교가","친한 척은 잘하지만 경계는 늘 켜두는 편","어울리기를 좋아하고 활동적이지만, 분위기를 빠르게 읽고 불편하면 슬쩍 빠져요. 자기 페이스를 지키는 영리한 타입이에요.","퍼즐 장난감, 스스로 선택할 수 있는 놀이","싫다는 신호를 보낼 때 바로 존중해 주면 신뢰가 훨씬 깊어져요."],
+SCBD:["듬직한 소파 친구","누구에게나 다정하고 어디서든 느긋하게","사람을 좋아하고 겁도 없지만 서두르는 법이 없어요. 보호자 옆에 꼭 붙어 쉬는 시간을 가장 좋아해요.","느린 산책, 마사지, 함께 낮잠","활동량이 적어 체중이 늘기 쉬워요. 가벼운 운동을 꾸준히 챙겨주세요."],
+SCBI:["여유로운 동네 어르신","반갑지만 굳이 매달리진 않아","누구와도 무난하게 지내고 웬만한 일에는 흔들리지 않아요. 혼자서도 잘 지내는, 함께 살기 편한 타입이에요.","햇볕 좋은 자리 찾기, 천천히 하는 탐색 놀이","무던해서 아픈 티도 덜 낼 수 있어요. 컨디션 변화를 평소보다 세심하게 봐주세요."],
+SCWD:["다정한 껌딱지","조용히 곁에 있는 게 제일 좋아","순하고 사람을 좋아하지만 낯선 소리나 변화에는 조심스러워요. 보호자가 곁에 있으면 금방 편안해져요.","무릎 위 휴식, 부드러운 빗질, 조용한 공간에서의 놀이","혼자 있는 시간에 불안해할 수 있어요. 외출 전후 인사를 짧고 담담하게 해주세요."],
+SCWI:["조용한 관찰자","다가가는 건 좋지만, 내 속도대로","사람을 싫어하진 않지만 천천히 마음을 열어요. 차분하고 신중해서 상황을 먼저 지켜본 뒤 움직여요.","창밖 구경, 스스로 다가올 수 있는 느긋한 놀이","억지로 안거나 다가가기보다 아이가 먼저 오도록 기다려 주세요."],
+RABD:["우리 집 경호원","밖에선 경계, 집에선 에너자이저","낯선 존재에게는 거리를 두지만 겁은 없고 활동적이에요. 가족에게만큼은 누구보다 적극적이고 다정해요.","보호자와 1:1 터그, 목표가 있는 훈련 게임","경계심이 짖음으로 이어지기 쉬워요. 낯선 사람과의 긍정적인 경험을 조금씩 쌓아주세요."],
+RABI:["고독한 사냥꾼","내 영역, 내 방식","사교에는 관심이 적지만 대담하고 활동적이에요. 혼자 탐색하고 사냥하는 걸 즐기는 자립심 강한 타입이에요.","사냥 본능을 채우는 놀이, 혼자 하는 노즈워크와 퍼즐","에너지를 쓸 곳이 없으면 스스로 일을 만들어요. 혼자 할 수 있는 놀잇감을 충분히 주세요."],
+RAWD:["가족 한정 개구쟁이","낯가림 끝, 집에선 장난꾸러기","밖에서는 조심스럽고 쉽게 놀라지만, 익숙한 가족 앞에서는 활발한 장난꾸러기로 변해요.","집 안에서 하는 숨바꼭질, 보호자와의 공놀이","새로운 환경은 짧게 여러 번 노출해 주세요. 집이 안전기지라는 느낌이 큰 힘이 돼요."],
+RAWI:["야생의 닌자","재빠르고, 조심스럽고, 자유롭게","예민하고 낯을 가리지만 움직임은 날래요. 숨을 곳과 높은 곳을 오가며 혼자만의 시간을 즐겨요.","높은 곳 오르기, 숨겨진 간식 찾기, 혼자 쫓는 장난감","숨을 공간을 꼭 마련해 주세요. 도망칠 곳이 있어야 오히려 더 편하게 나와요."],
+RCBD:["무뚝뚝한 츤데레","표현은 적어도 내 사람은 확실히","낯선 이에겐 무심하지만 겁은 없고 차분해요. 티는 덜 내도 보호자 곁을 묵묵히 지키는 의리파예요.","보호자 옆에서 하는 조용한 놀이, 가벼운 산책","애정 표현이 적다고 서운해하지 마세요. 곁에 있는 것 자체가 이 아이의 표현이에요."],
+RCBI:["도도한 귀족","관심은 내가 원할 때만","차분하고 침착하며 낯선 존재에게 관심이 적어요. 혼자서도 완벽하게 잘 지내는 우아한 독립파예요.","짧고 굵은 사냥놀이, 혼자 즐기는 전망 좋은 자리","아이가 먼저 다가올 때 충분히 반겨주세요. 그 순간이 관계를 쌓는 열쇠예요."],
+RCWD:["수줍은 껌딱지","세상은 무섭지만 보호자는 좋아","낯선 것과 큰 소리에 쉽게 놀라고 차분한 편이에요. 믿는 보호자에게 의지하며 안정감을 찾아요.","조용한 곳에서의 부드러운 놀이, 함께 쉬기","변화가 생길 땐 천천히 적응할 시간을 주세요. 익숙한 담요나 장난감이 도움이 돼요."],
+RCWI:["숨숨집 철학자","혼자만의 조용한 시간이 필요해","예민하고 차분하며 혼자 있는 시간에서 안정감을 얻어요. 신뢰가 쌓이면 자기만의 방식으로 다가와요.","숨숨집 근처에서 하는 느긋한 놀이, 창가 명상","억지로 꺼내지 말고 아이의 공간을 지켜주세요. 기다림이 가장 큰 배려예요."]
+};
+// ── 병원 정보: 여기만 바꾸면 페이지 전체에 반영돼요 ──
+const CLINIC={
+  name:"24시 다시봄동물의료센터",
+  shortName:"다시봄동물의료센터",
+  placeMobile:"https://m.place.naver.com/pet/2009564680/home", // 휴대폰용 네이버 플레이스
+  placeDesktop:"https://map.naver.com/p/entry/place/2009564680" // PC용 네이버 지도
+};
+const IMG_DIR="images/"; // 이미지 폴더 경로. 파일명 규칙: dog-SCBD.jpg, cat-SCBD.jpg
+let sp="dog",i=0,ans=[];
+const $=id=>document.getElementById(id);
+function show(id){["start","quiz","result"].forEach(s=>$(s).hidden=s!==id);window.scrollTo(0,0)}
+function begin(s){sp=s;i=0;ans=[];document.documentElement.dataset.species=s;show("quiz");render()}
+function render(){
+  const [q,opts]=Q[sp][i];
+  $("count").textContent=(i+1)+" / 12";
+  $("prog").style.width=(i/12*100)+"%";
+  $("back").disabled=i===0;
+  $("qtext").textContent=q;
+  $("opts").innerHTML="";
+  opts.forEach(([t,v],n)=>{
+    const b=document.createElement("button");b.id="opt-"+n;
+    b.innerHTML='<span class="k">'+"AB"[n]+'</span><span></span>';
+    b.lastChild.textContent=t;
+    b.onclick=()=>{ans[i]=v;i++;i<12?render():result()};
+    $("opts").appendChild(b);
+  });
+}
+function result(){
+  const c=x=>ans.filter(a=>a===x).length;
+  const code=AX.map(([a,b])=>c(a)>=c(b)?a:b).join("");
+  try{history.replaceState(null,"","#"+sp+"-"+code)}catch(e){}
+  showResult(code,c,false);
+}
+function showResult(code,c,shared){
+  const [name,tag,desc,play,tip]=T[code];
+  const animal=sp==="dog"?"강아지":"고양이";
+  $("rlabel").textContent=(shared?"친구네 ":"우리 ")+animal+"의 유형";
+  $("scores").hidden=shared;$("share").hidden=shared;$("try").hidden=!shared;
+  $("again").hidden=shared;$("other").hidden=shared;
+  $("rcode").textContent=code;$("rname").textContent=name;$("rtag").textContent=tag;
+  $("rdesc").textContent=desc;$("rplay").textContent=play;$("rtip").textContent=tip;
+  if(!shared)$("scores").innerHTML=AX.map(([a,b,la,lb])=>{
+    const na=c(a),nb=c(b);let cells="";
+    for(let k=0;k<6;k++)cells+='<span class="'+(k<3?(k>=3-na?"f":""):(k-3<nb?"f":""))+'"></span>';
+    return '<div class="row"><span class="l '+(na>nb?"on":"")+'">'+a+' '+la+'</span><div class="track">'+cells+'</div><span class="'+(nb>na?"on":"")+'">'+lb+' '+b+'</span></div>';
+  }).join("");
+  const file=sp+"-"+code+".jpg",img=$("rimg");
+  $("rphname").textContent="images/"+file;
+  img.hidden=true;$("rph").hidden=false;
+  img.alt=name+" 유형의 "+(sp==="dog"?"강아지":"고양이");
+  img.onload=()=>{img.hidden=false;$("rph").hidden=true};
+  img.onerror=()=>{img.hidden=true;$("rph").hidden=false};
+  img.src=IMG_DIR+file;
+  $("other").textContent=sp==="dog"?"고양이로 해보기":"강아지로 해보기";
+  $("toast").textContent="";
+  show("result");
+}
+$("pick-dog").onclick=()=>begin("dog");
+$("pick-cat").onclick=()=>begin("cat");
+$("back").onclick=()=>{if(i>0){i--;render()}};
+function home(){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+  document.documentElement.removeAttribute("data-species");show("start")}
+$("again").onclick=home;
+$("try").onclick=home;
+$("other").onclick=()=>begin(sp==="dog"?"cat":"dog");
+$("share").onclick=()=>{
+  const code=$("rcode").textContent;
+  const url=location.origin+location.pathname+"#"+sp+"-"+code;
+  const text="우리 "+(sp==="dog"?"강아지":"고양이")+"는 "+code+" '"+T[code][0]+"' 유형이래요! 너희 아이는 어떤 유형일까?";
+  const copy=()=>{const all=text+"\n"+url;
+    if(navigator.clipboard)navigator.clipboard.writeText(all).then(()=>$("toast").textContent="링크를 복사했어요. 카톡이나 SNS에 붙여넣어 공유해 보세요.").catch(()=>$("toast").textContent=all);
+    else $("toast").textContent=all;};
+  if(navigator.share){navigator.share({title:"멍냥 성향 테스트",text,url}).catch(e=>{if(e&&e.name!=="AbortError")copy()})}
+  else copy();
+};
+document.querySelectorAll(".credit-text").forEach(e=>e.textContent=CLINIC.shortName+" 검수");
+// 휴대폰이면 모바일 플레이스, PC면 네이버 지도 페이지로 연결
+const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+document.querySelectorAll(".place-link").forEach(a=>a.href=isMobile?CLINIC.placeMobile:CLINIC.placeDesktop);
+$("place-btn").textContent="우리 아이 건강 체크하기";
+// 공유 링크(#dog-SCBD)로 들어오면 결과 화면을 바로 보여줌
+(function(){const m=/^#(dog|cat)-([SR][AC][BW][DI])$/.exec(location.hash);
+  if(m){sp=m[1];document.documentElement.dataset.species=sp;showResult(m[2],null,true)}})();
+</script>
+</body>
+</html>
