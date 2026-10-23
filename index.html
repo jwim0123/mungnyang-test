@@ -80,11 +80,10 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .rname{font-size:2rem}
 .tag{font-size:1.05rem}
 .photo{margin:0;border-radius:20px;overflow:hidden;aspect-ratio:4/3;max-width:100%;background:var(--accent-soft)}
-.photo img{width:100%;height:100%;object-fit:cover;display:block}
-.ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  border:2px dashed var(--accent);border-radius:20px;color:var(--accent);text-align:center;padding:16px;box-sizing:border-box}
-.ph b{font-family:var(--f-mono);font-weight:500;font-size:.95rem}
-.ph span{font-size:.82rem;color:var(--muted)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .35s ease}
+.photo img.loaded{opacity:1}
+.photo.loading{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.6}}
 .scores{display:flex;flex-direction:column;gap:14px;background:var(--surface);border-radius:18px;padding:20px}
 .row{display:grid;grid-template-columns:5.2em 1fr 5.2em;gap:10px;align-items:center;font-size:.85rem}
 .row .l{text-align:right}
@@ -105,7 +104,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .toast{font-size:.85rem;color:var(--accent);min-height:1.4em;overflow-wrap:anywhere;user-select:all}
 .screen{display:flex;flex-direction:column;gap:24px}
 @media (max-width:420px){.axes{grid-template-columns:1fr}h1{font-size:2.2rem}.q{font-size:1.5rem}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
@@ -141,8 +140,7 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
     <h2 class="rname" id="rname"></h2>
     <p class="tag" id="rtag"></p>
     <figure class="photo" id="photo">
-      <img id="rimg" alt="" hidden>
-      <div class="ph" id="rph"><b id="rphname"></b><span>이 자리에 유형 이미지가 들어가요</span></div>
+      <img id="rimg" alt="">
     </figure>
     <div class="scores" id="scores"></div>
     <div class="sec"><h3>이런 아이예요</h3><p id="rdesc"></p></div>
@@ -232,9 +230,24 @@ function render(){
     const b=document.createElement("button");b.id="opt-"+n;
     b.innerHTML='<span class="k">'+"AB"[n]+'</span><span></span>';
     b.lastChild.textContent=t;
-    b.onclick=()=>{ans[i]=v;i++;i<12?render():result()};
+    b.onclick=()=>{ans[i]=v;i++;prefetch();i<12?render():result()};
     $("opts").appendChild(b);
   });
+}
+// 남은 문항으로 나올 수 있는 결과가 4가지 이하로 좁혀지면 그 그림들을 미리 받아둠
+const fetched=new Set();
+function prefetch(){
+  const done=ans.slice(0,i),n=x=>done.filter(a=>a===x).length;
+  let codes=[""];
+  for(const [a,b] of AX){
+    const na=n(a),nb=n(b),rem=3-na-nb,opts=[];
+    if(na+rem>=nb)opts.push(a);
+    if(nb+rem>na)opts.push(b);
+    codes=codes.flatMap(p=>opts.map(o=>p+o));
+  }
+  if(codes.length>4)return;
+  codes.forEach(code=>{const f=sp+"-"+code+".jpg";
+    if(!fetched.has(f)){fetched.add(f);new Image().src=IMG_DIR+f}});
 }
 function result(){
   const c=x=>ans.filter(a=>a===x).length;
@@ -255,12 +268,11 @@ function showResult(code,c,shared){
     for(let k=0;k<6;k++)cells+='<span class="'+(k<3?(k>=3-na?"f":""):(k-3<nb?"f":""))+'"></span>';
     return '<div class="row"><span class="l '+(na>nb?"on":"")+'">'+a+' '+la+'</span><div class="track">'+cells+'</div><span class="'+(nb>na?"on":"")+'">'+lb+' '+b+'</span></div>';
   }).join("");
-  const file=sp+"-"+code+".jpg",img=$("rimg");
-  $("rphname").textContent="images/"+file;
-  img.hidden=true;$("rph").hidden=false;
+  const file=sp+"-"+code+".jpg",img=$("rimg"),fig=$("photo");
+  img.classList.remove("loaded");fig.hidden=false;fig.classList.add("loading");
   img.alt=name+" 유형의 "+(sp==="dog"?"강아지":"고양이");
-  img.onload=()=>{img.hidden=false;$("rph").hidden=true};
-  img.onerror=()=>{img.hidden=true;$("rph").hidden=false};
+  img.onload=()=>{img.classList.add("loaded");fig.classList.remove("loading")};
+  img.onerror=()=>{fig.hidden=true;fig.classList.remove("loading")};
   img.src=IMG_DIR+file;
   $("other").textContent=sp==="dog"?"고양이로 해보기":"강아지로 해보기";
   $("toast").textContent="";
